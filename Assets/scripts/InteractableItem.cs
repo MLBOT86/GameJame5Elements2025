@@ -25,6 +25,7 @@ public class InteractableItem : MonoBehaviour, IInteractable
         // ActivateMechanism();
 
         GirlCanSay();
+
     }
 
     // ƒополнительные методы дл€ конкретной логики
@@ -35,7 +36,8 @@ public class InteractableItem : MonoBehaviour, IInteractable
     }
     private void GirlCanSay()
     {
-        GirlSay.SetActive(true);
+        //GirlSay.SetActive(true);
+        SoundManager.Instance.GoCollectItem();
     }
     private void OpenDoor()
     {

@@ -15,7 +15,7 @@ public class SceneTransition : MonoBehaviour
         {
             // Вычисляем расстояние до игрока
             float distance = Vector3.Distance(transform.position, player.transform.position);
-            Debug.Log(distance);
+            //Debug.Log(distance);
             // Если игрок достаточно близко - загружаем сцену
             if (distance <= detectionDistance)
             {

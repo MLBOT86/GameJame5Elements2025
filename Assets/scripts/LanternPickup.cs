@@ -56,7 +56,7 @@ public class LanternPickup: MonoBehaviour, IInteractable
     {
 
         GameManager.Instance.playerHP--;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+       GameManager.Instance.RestartScene();
         //if (playerLantern != null)
         // playerLantern.SetActive(false);
 

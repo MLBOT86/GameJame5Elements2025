@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject displayText;
     public int playerHP = 3;
     [SerializeField] private int maxHP = 5;
-    [SerializeField] private GameObject heartContainer;
+     private GameObject heartContainer;
     [SerializeField] private GameObject heartPrefab;
 
     private bool textEffectPlayed = false;
@@ -42,9 +42,28 @@ public class GameManager : MonoBehaviour
 
 
     [Header("Menu References")]
-    public GameObject pauseMenuUI; // Ссылка на UI панель меню паузы
+    private GameObject pauseMenuUI; // Ссылка на UI панель меню паузы
+    private GameObject GameOverMenuUI;
+    private GameObject HappyEndMenuUI;
+    private GameObject EndMenuUI;
+
 
     private bool isPaused = false;
+
+
+
+    private Button resumMenuButton;
+
+
+
+    public bool PlaerTakeWaterObj;
+    public bool PlaerTakeAirObj;
+    public bool PlaerTakEarthObj;
+    public bool PlaerTakeFireObj;
+
+
+
+
 
 
     private void Awake()
@@ -59,7 +78,7 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
 
         // Инициализация
-      
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     void Update()
@@ -76,17 +95,40 @@ public class GameManager : MonoBehaviour
                 PauseGame();
             }
         }
+
+
+        
+
     }
 
 
-
-
-    private void InitializeGame()
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        // Вызываем методы инициализации при загрузке новой сцены
+        InitializeGame();
+    }
+
+    public void InitializeGame()
+    {
+        FindAndSetupButton();
         // Создаем контейнер для сердечек если он не назначен
-        if (heartContainer == null)
-        {
-            GameObject canvas = FindObjectOfType<Canvas>().gameObject;
+        // if (heartContainer == null)
+        // {
+        //
+        heartContainer = GameObject.Find("herrtPArty");
+        pauseMenuUI = GameObject.Find("gameMenu");
+        GameOverMenuUI= GameObject.Find("gameOverMenu");
+        HappyEndMenuUI= GameObject.Find("Happy End ");
+        EndMenuUI= GameObject.Find("End ");
+
+
+
+
+        // pauseMenuUI.gameObject.SetActive(false);
+        Debug.Log("work" + pauseMenuUI);
+
+
+        GameObject canvas = FindObjectOfType<Canvas>().gameObject;
             if (canvas != null)
             {
                 heartContainer = new GameObject("HeartContainer");
@@ -96,8 +138,10 @@ public class GameManager : MonoBehaviour
                 rt.anchorMax = new Vector2(1, 1);
                 rt.pivot = new Vector2(1, 1);
                 rt.anchoredPosition = new Vector2(-50, -50);
+
+          
             }
-        }
+       // }
 
         // Запускаем эффект текста если еще не был запущен
         if (!textEffectPlayed &&(SceneManager.GetActiveScene().name == "SampleScene"))
@@ -116,12 +160,48 @@ public class GameManager : MonoBehaviour
     }
 
 
+
+
+    void FindAndSetupButton()
+    {
+        // Поиск кнопки по имени
+        GameObject buttonObj = GameObject.Find("resumeGame");
+
+        if (buttonObj != null)
+        {
+            resumMenuButton = buttonObj.GetComponent<Button>();
+
+            if (resumMenuButton != null)
+            {
+                // Назначаем метод на нажатие кнопки
+                resumMenuButton.onClick.AddListener(OnStartButtonClicked);
+                Debug.Log("Кнопка найдена и настроена: ");
+            }
+            else
+            {
+                Debug.LogError("На объекте  не найден компонент Button!");
+            }
+        }
+        else
+        {
+            Debug.LogError("Кнопка с именем "  + " не найдена в сцене!");
+        }
+    }
+
+
+    void OnStartButtonClicked()
+    {
+        ResumeGame();
+    }
+
+
     private void Start()
     {
-        if(SceneManager.GetActiveScene().name != "SampleScene")
+        
+        if (SceneManager.GetActiveScene().name != "SampleScene")
         {
 
-            InitializeGame();
+           // InitializeGame();
             GameStarted = true;
 
             LOckedCursor();
@@ -229,6 +309,10 @@ public class GameManager : MonoBehaviour
                 heartImage.color = heartColor;
             }
         }
+
+
+        pauseMenuUI.gameObject.SetActive(false);
+
     }
 
     // Метод вызывается когда HP достигает 0
@@ -280,6 +364,8 @@ public class GameManager : MonoBehaviour
 
     public void PauseGame()
     {
+        UnlockedCursor();
+
         isPaused = true;
         Time.timeScale = 0f; // Останавливает игровое время
 
@@ -298,6 +384,8 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void ResumeGame()
     {
+        LOckedCursor();
+
         isPaused = false;
         Time.timeScale = 1f; // Восстанавливаем нормальное время
 
@@ -379,6 +467,17 @@ public class GameManager : MonoBehaviour
             ResumeGame();
         else
             PauseGame();
+    }
+
+
+    public void CheckGameOver()
+    {
+
+        if (playerHP <= 0)
+        {
+            PauseGame();
+
+        }
     }
 
 

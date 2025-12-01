@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
 
     // Переменные для текста и HP
     [SerializeField] private GameObject displayText;
-    [SerializeField] private int playerHP = 3;
+    public int playerHP = 3;
     [SerializeField] private int maxHP = 5;
     [SerializeField] private GameObject heartContainer;
     [SerializeField] private GameObject heartPrefab;
@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
     //
     // верка на дубликаты при создании
 
-
+    public bool GameStarted=false;
 
 
     [Header("Menu References")]
@@ -59,7 +59,7 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
 
         // Инициализация
-        InitializeGame();
+      
     }
 
     void Update()
@@ -100,7 +100,7 @@ public class GameManager : MonoBehaviour
         }
 
         // Запускаем эффект текста если еще не был запущен
-        if (!textEffectPlayed)
+        if (!textEffectPlayed &&(SceneManager.GetActiveScene().name == "SampleScene"))
         {
             StartCoroutine(TextEffectCoroutine());
         }
@@ -114,6 +114,42 @@ public class GameManager : MonoBehaviour
         // Обновляем отображение HP
         UpdateHeartsDisplay();
     }
+
+
+    private void Start()
+    {
+        if(SceneManager.GetActiveScene().name != "SampleScene")
+        {
+
+            InitializeGame();
+            GameStarted = true;
+
+            LOckedCursor();
+        }
+    }
+    public void StartGame()
+    {
+
+        InitializeGame();
+        GameStarted = true;
+        SoundManager.Instance.StartSoundSays();
+        LOckedCursor();
+    }
+
+
+
+    public void LOckedCursor()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    public void UnlockedCursor()
+    {
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
+    }
+
 
     // Корутина для эффекта текста
     private IEnumerator TextEffectCoroutine()

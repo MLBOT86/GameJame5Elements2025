@@ -38,14 +38,21 @@ public class PlayerController : MonoBehaviour
         rb.interpolation = RigidbodyInterpolation.Interpolate;
 
         //  урсор в центре и скрыт
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        // 
+
     }
 
     void Update()
     {
-        GetInput();
-        HandleMouseLook();
+
+        if (GameManager.Instance.GameStarted)
+        {
+
+            GetInput();
+            HandleMouseLook();
+
+        }
+
     }
 
     void FixedUpdate()

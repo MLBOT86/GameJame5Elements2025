@@ -47,8 +47,16 @@ public class SoundManager : MonoBehaviour
     private void Start()
     {
         // Запускаем первый звук через 2 секунды
+       
+    }
+
+
+    public void StartSoundSays()
+    {
         StartCoroutine(PlayFirstSoundAfterDelay());
     }
+
+
 
     // Корутина для воспроизведения первого звука с задержкой
     private IEnumerator PlayFirstSoundAfterDelay()

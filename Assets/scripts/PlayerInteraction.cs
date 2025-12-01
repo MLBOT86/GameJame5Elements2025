@@ -1,4 +1,3 @@
-// PlayerInteraction.cs
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -16,14 +15,17 @@ public class PlayerInteraction : MonoBehaviour
 
     private Camera playerCamera;
     private IInteractable currentInteractable;
+    private Transform playerTransform;
 
     void Start()
     {
-        playerCamera = GetComponent<Camera>();
+        playerCamera = Camera.main;
+        playerTransform = transform;
 
-        // Настройка курсора
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        if (playerCamera == null)
+        {
+            playerCamera = GetComponent<Camera>();
+        }
 
         // Активируем прицел
         if (crosshair != null)
@@ -51,9 +53,24 @@ public class PlayerInteraction : MonoBehaviour
 
             if (interactable != null && interactable.IsInteractable)
             {
-                currentInteractable = interactable;
-                ShowInteractionPrompt(interactable.InteractionPrompt);
-                return;
+                // Проверяем расстояние до объекта
+                float distance = Vector3.Distance(playerTransform.position, hit.transform.position);
+
+                // Получаем компонент InteractableItem для проверки его радиуса
+                InteractableItem item = hit.collider.GetComponent<InteractableItem>();
+                float itemInteractionDistance = interactionDistance;
+
+                if (item != null)
+                {
+                    itemInteractionDistance = item.GetInteractionDistance();
+                }
+
+                if (distance <= itemInteractionDistance)
+                {
+                    currentInteractable = interactable;
+                    ShowInteractionPrompt(interactable.InteractionPrompt);
+                    return;
+                }
             }
         }
 
@@ -61,12 +78,17 @@ public class PlayerInteraction : MonoBehaviour
         currentInteractable = null;
         HideInteractionPrompt();
     }
+   
+
+
 
     private void HandleInteractionInput()
     {
         if (Input.GetKeyDown(KeyCode.F) && currentInteractable != null)
         {
             currentInteractable.Interact();
+            currentInteractable = null;
+            HideInteractionPrompt();
         }
     }
 

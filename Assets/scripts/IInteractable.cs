@@ -7,4 +7,7 @@ public interface IInteractable
     bool IsInteractable { get; } // Можно ли взаимодействовать сейчас
 
     void Interact(); // Метод, который вызывается при взаимодействии
+
+    
+
 }
